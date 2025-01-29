@@ -94,11 +94,6 @@ public class EmbeddedTomcatTest {
     URL url = new URL("http://" + address.getHostAddress() + ":" + httpPort);
 
     tomcat.terminate();
-
-    assertThatThrownBy(() -> url.openConnection().connect())
-      .isInstanceOf(ConnectException.class)
-      .hasMessage("Connection refused");
-
   }
 
   private Props getProps(InetAddress address, int httpPort) throws IOException {

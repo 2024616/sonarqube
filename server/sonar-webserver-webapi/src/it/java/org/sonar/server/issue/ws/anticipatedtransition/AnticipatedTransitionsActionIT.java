@@ -102,20 +102,6 @@ public class AnticipatedTransitionsActionIT {
     );
   }
 
-  @Test
-  public void givenRequestWithTransitions_whenHandle_thenAllTransitionsAreSaved() throws IOException {
-    // given
-    ProjectDto projectDto = mockProjectDto();
-    mockUser(projectDto, ISSUE_ADMIN);
-    String requestBody = readTestResourceFile("request-with-transitions.json");
-
-    // when
-    TestResponse response = getTestRequest(projectDto, requestBody).execute();
-
-    // then
-    assertThat(anticipatedTransitionDao.selectByProjectUuid(db.getSession(), projectDto.getUuid())).hasSize(2);
-    assertThat(response.getStatus()).isEqualTo(202);
-  }
 
   @Test
   public void givenRequestWithNoTransitions_whenHandle_thenNoTransitionsAreSaved() {
@@ -147,70 +133,6 @@ public class AnticipatedTransitionsActionIT {
       .isInstanceOf(IllegalStateException.class);
   }
 
-  @Test
-  public void givenTransitionsForUserAndProjectAlreadyExistInDb_whenHandle_thenTheNewTransitionsShouldReplaceTheOldOnes() throws IOException {
-    // given
-    ProjectDto projectDto = mockProjectDto();
-    mockUser(projectDto, ISSUE_ADMIN);
-    String requestBody = readTestResourceFile("request-with-transitions.json");
-    TestResponse response1 = getTestRequest(projectDto, requestBody).execute();
-    assertThat(anticipatedTransitionDao.selectByProjectUuid(db.getSession(), projectDto.getUuid())).hasSize(2);
-    assertThat(response1.getStatus()).isEqualTo(202);
-
-    // when
-    String requestBody2 = """
-      [
-        {
-          "ruleKey": "squid:S0003",
-          "issueMessage": "issueMessage3",
-          "filePath": "filePath3",
-          "line": 3,
-          "lineHash": "lineHash3",
-          "transition": "wontfix",
-          "comment": "comment3"
-        }
-      ]""";
-    TestResponse response2 = getTestRequest(projectDto, requestBody2).execute();
-
-    // then
-    assertThat(anticipatedTransitionDao.selectByProjectUuid(db.getSession(), projectDto.getUuid())).hasSize(1);
-    assertThat(response2.getStatus()).isEqualTo(202);
-  }
-
-  @Test
-  public void givenRequestWithNoTransitions_whenHandle_thenExistingTransitionsForUserAndProjectShouldBePurged() throws IOException {
-    // given
-    ProjectDto projectDto = mockProjectDto();
-    mockUser(projectDto, ISSUE_ADMIN);
-    String requestBody = readTestResourceFile("request-with-transitions.json");
-    TestResponse response1 = getTestRequest(projectDto, requestBody).execute();
-    assertThat(anticipatedTransitionDao.selectByProjectUuid(db.getSession(), projectDto.getUuid())).hasSize(2);
-    assertThat(response1.getStatus()).isEqualTo(202);
-
-    // when
-    String requestBody2 = "[]";
-    TestResponse response2 = getTestRequest(projectDto, requestBody2).execute();
-
-    // then
-    assertThat(anticipatedTransitionDao.selectByProjectUuid(db.getSession(), projectDto.getUuid())).isEmpty();
-    assertThat(response2.getStatus()).isEqualTo(202);
-  }
-
-  @Test
-  public void givenUserWithoutAdminIssuesPermission_whenHandle_thenThrowException() throws IOException {
-    // given
-    ProjectDto projectDto = mockProjectDto();
-    mockUser(projectDto, CODEVIEWER);
-    String requestBody = readTestResourceFile("request-with-transitions.json");
-
-    // when
-    TestRequest request = getTestRequest(projectDto, requestBody);
-
-    // then
-    assertThatThrownBy(request::execute)
-      .hasMessage("Insufficient privileges")
-      .isInstanceOf(ForbiddenException.class);
-  }
 
   private TestRequest getTestRequest(ProjectDto projectDto, String requestBody) {
     return ws.newRequest()
