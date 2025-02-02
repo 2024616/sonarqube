@@ -35,7 +35,7 @@ public class FilenameUtils {
   private static final char UNIX_SEPARATOR = '/';
 
   /**
-   * The Windows separator character. test
+   * The Windows separator character.
    */
   private static final char WINDOWS_SEPARATOR = '\\';
 
