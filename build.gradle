@@ -852,7 +852,7 @@ ext.osAdaptiveCommand = { commands ->
 
 task unzipSonar(type: Copy) {
   def zipFile = file("sonar-application/build/distributions/sonar-application-25.2-SNAPSHOT.zip")
-  def outputDir = file("sonar-application/build/distributions/unzipped")
+  def outputDir = file("sonar-application/build/distributions")
 
   from zipTree(zipFile)
   into outputDir
