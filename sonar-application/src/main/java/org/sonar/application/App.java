@@ -71,7 +71,7 @@ public class App {
         hardStopRequestWatcher.stopWatching();
       }
     } catch (Exception e) {
-      LoggerFactory.getLogger(App.class).error("Startup failures", e);
+      LoggerFactory.getLogger(App.class).error("Startup failure", e);
     }
 
     systemExit.exit(0);
