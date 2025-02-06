@@ -857,3 +857,10 @@ task unzipSonar(type: Copy) {
   from zipTree(zipFile)
   into outputDir
 }
+
+test {
+  testLogging {
+    events "passed", "failed", "skipped"
+    exceptionFormat "full"
+  }
+}
