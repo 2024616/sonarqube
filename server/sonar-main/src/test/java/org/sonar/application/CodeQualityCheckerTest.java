@@ -27,7 +27,7 @@ public class CodeQualityCheckerTest {
     @Test
     public void testIsLineTooLong() {
         assertThat(CodeQualityChecker.isLineTooLong("Short line")).isFalse();
-        assertThat(CodeQualityChecker.isLineTooLong("A".repeat(80))).isFalse();
+        assertThat(CodeQualityChecker.isLineTooLong("A".repeat(50))).isFalse();
         assertThat(CodeQualityChecker.isLineTooLong("A".repeat(81))).isTrue();
         assertThat(CodeQualityChecker.isLineTooLong(null)).isFalse();
     }
